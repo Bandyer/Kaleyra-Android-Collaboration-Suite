@@ -56,8 +56,10 @@ android{
 
 ### More
 
-[Logging](https://github.com/Bandyer/Bandyer-Android-SDK/wiki/Logging)
+[Logging](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Logging)
+
 [User Description](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/User-Description)
+
 [Proguard](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Proguard)
 
 ### Customize UI
