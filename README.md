@@ -56,6 +56,8 @@ android{
 
 ### More
 
+[Enable Call Sounds & Audio Routing](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Call-Sounds-&-Audio-Routing)
+
 [Logging](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Logging)
 
 [User Description](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/User-Description)
