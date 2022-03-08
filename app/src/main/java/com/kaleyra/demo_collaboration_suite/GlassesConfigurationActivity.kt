@@ -1,0 +1,61 @@
+/*
+ * Copyright 2022 Kaleyra @ https://www.kaleyra.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.kaleyra.demo_collaboration_suite
+
+import android.app.Activity
+import android.view.MotionEvent
+import com.kaleyra.app_configuration.activities.QRConfigurationActivity
+import com.kaleyra.app_utilities.utils.Utils
+
+class GlassesConfigurationActivity : QRConfigurationActivity() {
+
+    private val glassGestureDetector: GlassGestureDetector by lazy {
+        GlassGestureDetector(this, glassGestureOnGestureListener)
+    }
+    private var glassGestureOnGestureListener = object : GlassGestureDetector.OnGestureListener {
+        override fun onGesture(gesture: GlassGestureDetector.Gesture): Boolean {
+            when (gesture) {
+                GlassGestureDetector.Gesture.TAP ->
+                    // Response for TAP gesture
+                    return true
+                GlassGestureDetector.Gesture.SWIPE_FORWARD ->
+                    // Response for SWIPE_FORWARD gesture
+                    return true
+                GlassGestureDetector.Gesture.SWIPE_BACKWARD ->
+                    // Response for SWIPE_BACKWARD gesture
+                    return true
+                GlassGestureDetector.Gesture.SWIPE_DOWN -> {
+                    setResult(Activity.RESULT_CANCELED)
+                    finish()
+                    return true
+                }
+                GlassGestureDetector.Gesture.SWIPE_UP -> {
+                    moveTaskToBack(true)
+                    return true
+                }
+                else -> return false
+            }
+        }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        return if (Utils.isGoogleGlassDevice())
+            glassGestureDetector.onTouchEvent(ev)
+        else
+            super.dispatchTouchEvent(ev)
+    }
+}
