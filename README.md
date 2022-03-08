@@ -72,7 +72,7 @@ android{
 
 ### Code documentation
 
-[Kotlin](https://docs.bandyer.com/Kaleyra-Android-Collaboration-Suite/kDoc/collaboration-suite/)
+[Kotlin](https://docs.bandyer.com/Kaleyra-Android-Collaboration-Suite/kDoc/)
 
 ## Credits
 
