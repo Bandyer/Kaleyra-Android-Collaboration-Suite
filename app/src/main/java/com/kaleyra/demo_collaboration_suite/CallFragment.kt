@@ -35,6 +35,10 @@ import com.kaleyra.collaboration_suite.BuddyUser
 import com.kaleyra.collaboration_suite.Collaboration
 import com.kaleyra.collaboration_suite.phonebox.Call
 import com.kaleyra.collaboration_suite.phonebox.PhoneBox
+import com.kaleyra.collaboration_suite.utils.logger.INPUTS
+import com.kaleyra.collaboration_suite.utils.logger.PHONE_BOX
+import com.kaleyra.collaboration_suite.utils.logger.PHONE_CALL
+import com.kaleyra.collaboration_suite.utils.logger.STREAMS
 import com.kaleyra.collaboration_suite_core_ui.CollaborationUI
 import com.kaleyra.collaboration_suite_core_ui.PhoneBoxUI
 import com.kaleyra.collaboration_suite_core_ui.model.UsersDescription
@@ -49,6 +53,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
+import java.util.Date
+
+suspend fun updateToken(date: Date) = restApi.getAccessToken()
 
 class CallFragment : Fragment() {
 
@@ -77,12 +84,12 @@ class CallFragment : Fragment() {
                     Environment.create(appConfiguration.environment),
                     Region.create(appConfiguration.region),
                     httpStack = okHttpClient,
-                    logger = androidPrioryLogger(BaseLogger.VERBOSE, -1)
+                    logger = androidPrioryLogger(BaseLogger.VERBOSE, PHONE_CALL or PHONE_BOX or STREAMS or INPUTS)
                 )
 
                 val token = restApi.getAccessToken()
 
-                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(token, onExpire = { restApi.getAccessToken() }), configuration)
+                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(token, onExpire = ::updateToken), configuration)
                 CollaborationUI.usersDescription = UsersDescription(
                     name = {
                         it.joinToString { userId ->

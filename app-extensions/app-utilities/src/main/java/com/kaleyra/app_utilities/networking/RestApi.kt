@@ -18,8 +18,6 @@ package com.kaleyra.app_utilities.networking
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import com.kaleyra.collaboration_suite_utils.ContextRetainer.Companion.context
-import com.kaleyra.collaboration_suite_utils.logging.PriorityLogger
 import com.kaleyra.app_configuration.model.Configuration
 import com.kaleyra.app_configuration.model.PushProvider
 import com.kaleyra.app_utilities.MultiDexApplication.Companion.okHttpClient
@@ -28,22 +26,15 @@ import com.kaleyra.app_utilities.networking.models.BandyerUsers
 import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
 import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager.getConfiguration
 import com.kaleyra.app_utilities.storage.LoginManager
-import com.kaleyra.collaboration_suite_networking.Environment
-import com.kaleyra.collaboration_suite_networking.Region
-import io.ktor.client.HttpClient
-import io.ktor.client.call.receive
-import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.features.json.JsonFeature
-import io.ktor.client.features.json.serializer.KotlinxSerializer
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.headers
-import io.ktor.client.request.post
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType.Application
-import io.ktor.http.HeadersBuilder
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.http.ContentType.*
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +42,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -64,18 +57,15 @@ import okhttp3.OkHttpClient
  *
  * @author kristiyan
  */
-class RestApi {
+class RestApi(val applicationContext: Context) {
 
     data class RestConfiguration(
-        override val userId: String,
         val apiKey: String,
-        override val appId: String,
-        override val environment: Environment,
-        override val region: Region,
-        override val httpStack: OkHttpClient
-    ) : com.kaleyra.collaboration_suite_networking.Configuration {
-        override val logger: PriorityLogger? = null
-    }
+        val appId: String,
+        val environment: String,
+        val region: String,
+        val httpStack: OkHttpClient
+    )
 
     private var restConfiguration: RestConfiguration? = null
 
@@ -85,12 +75,12 @@ class RestApi {
     private val configurationListener =
         SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key != "configuration") return@OnSharedPreferenceChangeListener
-            restConfiguration = getConfiguration(context).toRest()
+            restConfiguration = getConfiguration(applicationContext).toRest()
         }
 
     init {
-        restConfiguration = getConfiguration(context).toRest()
-        context
+        updateConfiguration()
+        applicationContext
             .getSharedPreferences(
                 ConfigurationPrefsManager.CONFIGURATION_PREFS,
                 Context.MODE_PRIVATE
@@ -98,18 +88,19 @@ class RestApi {
             .registerOnSharedPreferenceChangeListener(configurationListener)
     }
 
-    private fun Configuration.toRest() =
-        getConfiguration(context).takeIf { LoginManager.isUserLogged(context) }?.let {
-            RestConfiguration(
-                LoginManager.getLoggedUser(context),
-                apiKey,
-                appId,
-                Environment.create(environment),
-                Region.create(region),
-                okHttpClient
-            )
-        }
+    private fun updateConfiguration() {
+        restConfiguration = getConfiguration(applicationContext).toRest()
+    }
 
+    private fun Configuration.toRest(): RestConfiguration {
+        return RestConfiguration(
+            apiKey,
+            appId,
+            environment,
+            region,
+            okHttpClient
+        )
+    }
 
     private val client by lazy {
         HttpClient(OkHttp) {
@@ -127,44 +118,67 @@ class RestApi {
         }
     }
 
-    private var endpoint = restConfiguration?.endpoint() ?: ""
+    private val endpoint: String
+        get() {
+            val envName = restConfiguration?.environment.takeIf { it != "production" }?.prependIndent(".") ?: ""
+            return "https://cs$envName.${restConfiguration?.region}.bandyer.com"
+        }
     private var apiKey = restConfiguration?.apiKey ?: ""
-    private var userId = restConfiguration?.userId ?: ""
     private var appId = restConfiguration?.appId ?: ""
+    private val userId: String
+        get() = LoginManager.getLoggedUser(applicationContext)
 
     private var configurationHeaders: HeadersBuilder.() -> Unit = {
         append("apiKey", apiKey)
     }
 
+    private var lastAccessTokenRequestTimestamp = 0L
+    private val accessTokenCachingDuration = TimeUnit.MINUTES.toMillis(5)
+    private var currentAccessToken: String? = null
+
     suspend fun getAccessToken(): String {
         return try {
+
+            if (System.currentTimeMillis() - lastAccessTokenRequestTimestamp < accessTokenCachingDuration) {
+                withContext(Dispatchers.Main) {
+                    currentAccessToken
+                }
+            }
+
+            updateConfiguration()
             val response: HttpResponse = client.post("$endpoint/rest/sdk/credentials") {
                 headers(configurationHeaders)
                 contentType(Application.Json)
-                body = AccessToken.Request(userId)
+                body = AccessToken.Request(LoginManager.getLoggedUser(applicationContext))
             }
-            response.receive<AccessToken.Response>().access_token
+            withContext(Dispatchers.Main) {
+                currentAccessToken = response.receive<AccessToken.Response>().access_token
+                lastAccessTokenRequestTimestamp = System.currentTimeMillis()
+                currentAccessToken!!
+            }
         } catch (t: Throwable) {
             Log.e("GetAccessToken", t.message, t)
-            ""
+            withContext(Dispatchers.Main) { "" }
         }
     }
 
     suspend fun listUsers(): List<String> {
         return try {
+            updateConfiguration()
             val response: HttpResponse = client.get("$endpoint/rest/user/list") {
                 headers(configurationHeaders)
                 contentType(Application.Json)
             }
-            response.receive<BandyerUsers>().user_id_list
+            withContext(Dispatchers.Main) { response.receive<BandyerUsers>().user_id_list }
         } catch (t: Throwable) {
             Log.e("GetListUsers", t.message, t)
-            emptyList()
+            withContext(Dispatchers.Main) { emptyList() }
         }
     }
 
     fun registerDeviceForPushNotification(pushProvider: PushProvider, devicePushToken: String) {
         scope.launch {
+            updateConfiguration()
             kotlin.runCatching {
                 val response: HttpResponse =
                     client.post("$endpoint/mobile_push_notifications/rest/device") {
@@ -186,6 +200,7 @@ class RestApi {
     }
 
     fun unregisterDeviceForPushNotification(devicePushToken: String) {
+        updateConfiguration()
         scope.launch {
             kotlin.runCatching {
                 val response: HttpResponse =
@@ -200,7 +215,7 @@ class RestApi {
         }
     }
 
-    fun cancel() {
+    fun cancel() = kotlin.runCatching {
         scope.coroutineContext.cancelChildren()
     }
 }

@@ -50,6 +50,8 @@ abstract class BaseActivity : AppCompatActivity() {
         dialog!!.show()
     }
 
+    protected fun dismissErrorDialog() = dialog?.dismiss()
+
     @JvmOverloads
     protected fun showConfirmDialog(@StringRes title: Int, @StringRes message: Int, onConfirm: DialogInterface.OnClickListener? = null) {
         if (dialog != null) dialog!!.dismiss()

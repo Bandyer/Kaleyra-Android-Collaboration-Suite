@@ -16,6 +16,7 @@
 
 package com.kaleyra.app_utilities
 
+import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.multidex.MultiDexApplication
@@ -47,12 +48,16 @@ import okhttp3.OkHttpClient
 abstract class MultiDexApplication : MultiDexApplication() {
 
     companion object {
+        private var application: Application? = null
         var okHttpClient = OkHttpClient()
-        val restApi by lazy { RestApi() }
+        @JvmStatic
+        val restApi by lazy { RestApi(application!!) }
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        application = this
 
         // If triggering restart of application skip
         if (ProcessPhoenix.isPhoenixProcess(this)) return

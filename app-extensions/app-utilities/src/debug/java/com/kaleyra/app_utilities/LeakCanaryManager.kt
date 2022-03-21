@@ -15,6 +15,7 @@
  */
 package com.kaleyra.app_utilities
 
+import com.facebook.flipper.plugins.leakcanary2.FlipperLeakListener
 import leakcanary.LeakCanary
 import leakcanary.ToastEventListener
 
@@ -27,6 +28,7 @@ object LeakCanaryManager {
         LeakCanary.config = LeakCanary.config.run {
             copy(
                 dumpHeap = enabled,
+                onHeapAnalyzedListener = FlipperLeakListener(),
                 eventListeners = eventListeners.filter { it !is ToastEventListener })
         }
     }

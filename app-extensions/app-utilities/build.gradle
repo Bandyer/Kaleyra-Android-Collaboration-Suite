@@ -64,15 +64,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "boolean", "USE_LEAK_CANARY", "false"
-            buildConfigField "boolean", "USE_MOCK_USER_DETAILS_PROVIDER", "false"
-            buildConfigField "boolean", "USE_SIMPLIFIED_VERSION", "true"
-            buildConfigField "boolean", "MOCK_USER_AUTHENTICATION_REQUEST", "false"
         }
         debug {
-            buildConfigField "boolean", "USE_LEAK_CANARY", "$useLeakCanary"
-            buildConfigField "boolean", "USE_MOCK_USER_DETAILS_PROVIDER", "$useMockUserDetailsProvider"
-            buildConfigField "boolean", "USE_SIMPLIFIED_VERSION", "false"
+
         }
     }
 
@@ -115,12 +109,12 @@ dependencies {
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation "com.jakewharton:process-phoenix:$phoenixProcessLibVersion"
 
-    debugImplementation 'com.facebook.flipper:flipper:0.131.1'
-    debugImplementation 'com.facebook.soloader:soloader:0.10.1'
-    debugImplementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.131.1'
+    debugImplementation 'com.facebook.flipper:flipper:0.137.0'
+    debugImplementation 'com.facebook.soloader:soloader:0.10.3'
+    debugImplementation 'com.facebook.flipper:flipper-leakcanary2-plugin:0.137.0'
     debugImplementation 'com.bandyer.flipper:flipper-socket-io-plugin:1.0.2'
-    debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.131.1'
-    releaseImplementation 'com.facebook.flipper:flipper-noop:0.131.1'
+    debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.137.0'
+    releaseImplementation 'com.facebook.flipper:flipper-noop:0.137.0'
 
     /*** Debug leaks ***/
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
@@ -132,7 +126,7 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:$firebaseMessagingLibVersion"
 
     /*** Pushy notification service, useful for China ***/
-    compileOnly 'me.pushy:sdk:1.0.78'
+    compileOnly 'me.pushy:sdk:1.0.79'
     compileOnly "com.huawei.hms:push:$huawei_push_version"
 
     /*** Crashlytics ***/
@@ -147,6 +141,4 @@ dependencies {
 
     /*** Bandyer Android SDK ***/
     compileOnly("com.bandyer:bandyer-android-sdk:$bandyerLibVersion")
-    compileOnly ("com.kaleyra:collaboration-suite-utils:1.0.0")
-    compileOnly ("com.kaleyra:collaboration-suite-networking:1.0.0")
 }

@@ -16,6 +16,7 @@
 package com.kaleyra.app_configuration.model
 
 import android.content.Context
+import com.kaleyra.app_configuration.BuildConfig
 import com.kaleyra.app_configuration.R
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -29,7 +30,7 @@ import kotlinx.serialization.json.Json
 data class Configuration(
     var appId: String,
     var apiKey: String,
-    var region: String,
+    var region: String = "Eu",
     var environment: String,
     var userId: String? = null,
     var projectNumber: String? = null,
@@ -38,9 +39,9 @@ data class Configuration(
     var logoName: String? = null,
     var customUserDetailsName: String? = null,
     var customUserDetailsImageUrl: String? = null,
-    var userDetailsProviderMode: UserDetailsProviderMode = UserDetailsProviderMode.NONE,
-    var useLeakCanary: Boolean = false,
-    var useSimplifiedVersion: Boolean = true,
+    var userDetailsProviderMode: UserDetailsProviderMode = if (BuildConfig.USE_MOCK_USER_DETAILS_PROVIDER) UserDetailsProviderMode.SAMPLE else UserDetailsProviderMode.NONE,
+    var useLeakCanary: Boolean = BuildConfig.USE_LEAK_CANARY,
+    var useSimplifiedVersion: Boolean = BuildConfig.USE_SIMPLIFIED_VERSION,
     var defaultCallType: CallOptionsType = CallOptionsType.AUDIO_VIDEO,
     var withWhiteboardCapability: Boolean = true,
     var withFileSharingCapability: Boolean = true,
@@ -62,7 +63,14 @@ data class Configuration(
 
     companion object {
 
-        private val json: Json by lazy { Json { isLenient = true; ignoreUnknownKeys = true; coerceInputValues = true } }
+        private val json: Json by lazy {
+            Json {
+                isLenient = true
+                ignoreUnknownKeys = true
+                encodeDefaults = true
+                coerceInputValues = true
+            }
+        }
 
         fun create(encoded: String): Configuration = json.decodeFromString(encoded)
     }

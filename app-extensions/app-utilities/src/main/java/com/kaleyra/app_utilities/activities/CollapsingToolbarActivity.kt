@@ -30,12 +30,13 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
-import com.kaleyra.app_utilities.R
-import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
-import com.kaleyra.app_utilities.utils.DPadNavigationHelper
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener
 import com.google.android.material.appbar.AppBarLayout.ScrollingViewBehavior
+import com.kaleyra.app_utilities.MultiDexApplication
+import com.kaleyra.app_utilities.R
+import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
+import com.kaleyra.app_utilities.utils.DPadNavigationHelper
 import kotlinx.android.synthetic.main.activity_collapsing_toolbar.*
 import kotlin.math.abs
 
@@ -44,16 +45,22 @@ abstract class CollapsingToolbarActivity : BaseActivity(), OnRefreshListener {
     private var appTitle: String? = null
     private var collapsedTitle: String? = null
 
-    abstract val versionName: String
-
     private val textSizeH1 by lazy { resources.getDimensionPixelSize(R.dimen.text_h1) }
     private val textSizeH3 by lazy { resources.getDimensionPixelSize(R.dimen.text_h3) }
     private val textSizeH4 by lazy { resources.getDimensionPixelSize(R.dimen.text_h4) }
     private var titleSpan: SpannableString? = null
 
+    protected val restApi by lazy { MultiDexApplication.restApi }
+
+    private val version: String by lazy {
+        val pInfo = packageManager.getPackageInfo(packageName, 0)
+        pInfo.versionName
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        titleSpan = SpannableString(String.format(resources.getString(R.string.app_name_with_version), "v$versionName"))
+
+        titleSpan = SpannableString(String.format(resources.getString(R.string.app_name_with_version), "v$version"))
         titleSpan!!.setSpan(AbsoluteSizeSpan(textSizeH1), 0, titleSpan!!.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
     }
 
@@ -84,7 +91,7 @@ abstract class CollapsingToolbarActivity : BaseActivity(), OnRefreshListener {
 
     fun setCollapsingToolbarTitle(portraitTitle: String, landscapeTitle: String) {
         val environment = ConfigurationPrefsManager.getConfiguration(this).environment
-        appTitle = String.format(resources.getString(R.string.app_name_with_version), "v$versionName")
+        appTitle = String.format(resources.getString(R.string.app_name_with_version), "v$version")
         val envTextView = SpannableString("\n@${environment}\n")
         envTextView.setSpan(AbsoluteSizeSpan(textSizeH4), 0, envTextView.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
         val infoSpan = SpannableString("\n$portraitTitle")

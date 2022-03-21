@@ -19,17 +19,10 @@ package com.kaleyra.app_utilities.utils
 import android.content.Context
 import android.os.Build
 import android.util.DisplayMetrics
-import com.kaleyra.collaboration_suite_networking.Environment
-
 
 object Utils {
     fun dpToPx(context: Context, dp: Float): Int {
         return (dp * (context.resources.displayMetrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)).toInt()
-    }
-
-    @JvmStatic
-    fun getEnvironmentByName(name: String): Environment {
-        return Environment.create(name)
     }
 
     @JvmStatic
