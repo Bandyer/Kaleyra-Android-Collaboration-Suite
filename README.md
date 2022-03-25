@@ -22,6 +22,8 @@ Supported API level 21+ (Android 5.0 Lollipop).
 
 ```java
 android{
+    compileSdkVersion 31
+    
     compileOptions{
         // https://developer.android.com/studio/write/java8-support
         coreLibraryDesugaringEnabled true
