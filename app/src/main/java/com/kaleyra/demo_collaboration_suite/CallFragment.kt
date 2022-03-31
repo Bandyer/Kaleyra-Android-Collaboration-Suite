@@ -27,35 +27,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.kaleyra.app_utilities.MultiDexApplication.Companion.okHttpClient
-import com.kaleyra.app_utilities.MultiDexApplication.Companion.restApi
-import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
 import com.kaleyra.app_utilities.storage.LoginManager
 import com.kaleyra.collaboration_suite.BuddyUser
 import com.kaleyra.collaboration_suite.Collaboration
 import com.kaleyra.collaboration_suite.phonebox.Call
 import com.kaleyra.collaboration_suite.phonebox.PhoneBox
-import com.kaleyra.collaboration_suite.utils.logger.INPUTS
-import com.kaleyra.collaboration_suite.utils.logger.PHONE_BOX
-import com.kaleyra.collaboration_suite.utils.logger.PHONE_CALL
-import com.kaleyra.collaboration_suite.utils.logger.STREAMS
 import com.kaleyra.collaboration_suite_core_ui.CollaborationUI
 import com.kaleyra.collaboration_suite_core_ui.PhoneBoxUI
 import com.kaleyra.collaboration_suite_core_ui.model.UsersDescription
 import com.kaleyra.collaboration_suite_extension_audio.extensions.CollaborationAudioExtensions.enableAudioRouting
 import com.kaleyra.collaboration_suite_glass_ui.utils.extensions.setUpWithGlassUI
-import com.kaleyra.collaboration_suite_networking.Environment
-import com.kaleyra.collaboration_suite_networking.Region
-import com.kaleyra.collaboration_suite_utils.logging.BaseLogger
-import com.kaleyra.collaboration_suite_utils.logging.androidPrioryLogger
 import com.kaleyra.demo_collaboration_suite.databinding.FragmentCallBinding
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
-import java.util.Date
-
-suspend fun updateToken(date: Date) = restApi.getAccessToken()
 
 class CallFragment : Fragment() {
 
@@ -76,20 +62,10 @@ class CallFragment : Fragment() {
             loggedUser.text = resources.getString(R.string.logged_as, userId)
 
             lifecycleScope.launch {
-                val appConfiguration = ConfigurationPrefsManager.getConfiguration(requireContext())
 
-                val configuration = Collaboration.Configuration(
-                    userId,
-                    appConfiguration.appId,
-                    Environment.create(appConfiguration.environment),
-                    Region.create(appConfiguration.region),
-                    httpStack = okHttpClient,
-                    logger = androidPrioryLogger(BaseLogger.VERBOSE, PHONE_CALL or PHONE_BOX or STREAMS or INPUTS)
-                )
+                val configuration = requireContext().configuration() ?: return@launch
 
-                val token = restApi.getAccessToken()
-
-                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(token, onExpire = ::updateToken), configuration)
+                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(requestToken(), onExpire = ::requestToken), configuration)
                 CollaborationUI.usersDescription = UsersDescription(
                     name = {
                         it.joinToString { userId ->

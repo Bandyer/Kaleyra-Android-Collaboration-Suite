@@ -20,15 +20,12 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.kaleyra.collaboration_suite_utils.logging.BaseLogger
-import com.kaleyra.collaboration_suite_utils.logging.androidPrioryLogger
-import com.kaleyra.app_utilities.MultiDexApplication
 import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
 import com.kaleyra.collaboration_suite.Collaboration
-import com.kaleyra.collaboration_suite_networking.Environment
-import com.kaleyra.collaboration_suite_networking.Region
 import com.kaleyra.collaboration_suite_core_ui.CollaborationUI
 import com.kaleyra.collaboration_suite_glass_ui.utils.extensions.setUpWithGlassUI
+import com.kaleyra.demo_collaboration_suite.configuration
+import com.kaleyra.demo_collaboration_suite.requestToken
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -44,25 +41,9 @@ class PushNotificationPayloadWorker(val context: Context, workerParams: WorkerPa
             val payload = inputData.getString("payload") ?: return Result.failure()
             Log.d(TAG, "Received payload\n$payload\nready to be processed.")
 
-            val appConfiguration = ConfigurationPrefsManager.getConfiguration(context)
-
-            val userId = appConfiguration.userId ?: run {
-                Log.d(TAG, "Missing userId to handle pushNotification.")
-                return Result.failure()
-            }
-
-            val configuration = Collaboration.Configuration(
-                userId,
-                appConfiguration.appId,
-                Environment.create(appConfiguration.environment),
-                Region.create(appConfiguration.region),
-                httpStack = MultiDexApplication.okHttpClient,
-                logger = androidPrioryLogger(BaseLogger.VERBOSE, -1)
-            )
-
             MainScope().launch {
-                val token = MultiDexApplication.restApi.getAccessToken()
-                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(token, onExpire = { MultiDexApplication.restApi.getAccessToken() }), configuration)
+                val configuration = context.configuration() ?: return@launch
+                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(requestToken(), onExpire = ::requestToken), configuration)
                 CollaborationUI.phoneBox.connect()
             }
         } catch (e: Throwable) {

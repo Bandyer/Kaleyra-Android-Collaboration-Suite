@@ -78,12 +78,12 @@
 
                 <data
                     android:host="*.bandyer.com"
-                    android:pathPrefix="/*/rest-call-handler/"
+                    android:pathPattern="/..*/rest-call-handler/..*"
                     android:scheme="https" />
 
                 <data
                     android:host="*.bandyer.com"
-                    android:pathPrefix="/*/direct-rest-call-handler"
+                    android:pathPattern="/..*/direct-rest-call-handler/..*"
                     android:scheme="https" />
             </intent-filter>
         </activity>

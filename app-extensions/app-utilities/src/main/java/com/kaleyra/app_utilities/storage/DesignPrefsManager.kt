@@ -18,8 +18,8 @@ package com.kaleyra.app_utilities.storage
 
 import android.annotation.SuppressLint
 import android.content.Context
-import com.bandyer.android_sdk.BandyerSDK
 import com.kaleyra.app_configuration.model.Configuration
+import com.kaleyra.collaboration_suite_core_ui.utils.DESIGN_PREFS
 
 object DesignPrefsManager {
 
@@ -47,7 +47,7 @@ object DesignPrefsManager {
      */
     @SuppressLint("ApplySharedPref")
     private fun setWatermarkUri(context: Context, url: String?) {
-        context.getSharedPreferences(BandyerSDK.DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("call_watermark_image_uri", url).commit()
+        context.getSharedPreferences(DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("call_watermark_image_uri", url).commit()
     }
 
     /**
@@ -58,7 +58,7 @@ object DesignPrefsManager {
      */
     @SuppressLint("ApplySharedPref")
     private fun setWatermarkText(context: Context, text: String?) {
-        context.getSharedPreferences(BandyerSDK.DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("call_watermark_text", text).commit()
+        context.getSharedPreferences(DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("call_watermark_text", text).commit()
     }
 
     /**
@@ -69,7 +69,7 @@ object DesignPrefsManager {
      */
     @SuppressLint("ApplySharedPref")
     private fun setCustomUserDetailsImageUri(context: Context, uri: String?) {
-        context.getSharedPreferences(BandyerSDK.DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("custom_user_details_image_uri", uri).commit()
+        context.getSharedPreferences(DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("custom_user_details_image_uri", uri).commit()
     }
 
     /**
@@ -80,7 +80,7 @@ object DesignPrefsManager {
      */
     @SuppressLint("ApplySharedPref")
     private fun setCustomUserDetailsDisplayName(context: Context, text: String?) {
-        context.getSharedPreferences(BandyerSDK.DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("custom_user_details_display_name", text).commit()
+        context.getSharedPreferences(DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("custom_user_details_display_name", text).commit()
     }
 
     /**
@@ -92,7 +92,7 @@ object DesignPrefsManager {
     @JvmStatic
     @SuppressLint("ApplySharedPref")
     private fun setMockedUserDetailsMode(context: Context, mode: String?) {
-        context.getSharedPreferences(BandyerSDK.DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("mock_user_details_mode", mode).commit()
+        context.getSharedPreferences(DESIGN_PREFS, Context.MODE_PRIVATE).edit().putString("mock_user_details_mode", mode).commit()
     }
 
     /**
@@ -102,6 +102,6 @@ object DesignPrefsManager {
      */
     @SuppressLint("ApplySharedPref")
     fun clearAll(context: Context) {
-        context.getSharedPreferences(BandyerSDK.DESIGN_PREFS, Context.MODE_PRIVATE).edit().clear().commit()
+        context.getSharedPreferences(DESIGN_PREFS, Context.MODE_PRIVATE).edit().clear().commit()
     }
 }
