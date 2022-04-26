@@ -70,9 +70,9 @@ android{
 
 🎨 &nbsp; [Color System](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Color-System)
 
-🎑 &nbsp; [Customize Colors & Themes](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Colors-&-Themes-v3.0.0)
+🎑 &nbsp; [Customize Colors & Themes](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Colors-&-Themes)
 
-🆎 &nbsp; [Customize Font](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Font-v3.0.0)
+🆎 &nbsp; [Customize Font](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Font)
 
 ### Code documentation
 
