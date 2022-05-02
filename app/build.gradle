@@ -124,8 +124,8 @@ dependencies {
     implementation project(":app-utilities")
     implementation project(':app-configuration')
     implementation project(":app-design")
-    implementation 'com.kaleyra:collaboration-suite:1.0.0-alpha4'
-    implementation 'com.kaleyra:collaboration-suite-extension-audio:1.0.0-alpha4'
-    implementation 'com.kaleyra:collaboration-suite-glass-ui:3.0.3'
+    implementation 'com.kaleyra:collaboration-suite:1.0.0-alpha5'
+    implementation 'com.kaleyra:collaboration-suite-extension-audio:1.0.0-alpha5'
+    implementation 'com.kaleyra:collaboration-suite-glass-ui:3.0.4'
 
 }

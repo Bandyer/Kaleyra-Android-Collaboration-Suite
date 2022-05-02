@@ -35,17 +35,6 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
-        <!-- activities -->
-
-        <activity
-            android:name=".settings.DefaultCallSettingsActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboard|keyboardHidden|navigation"
-            android:label="@string/default_call_options" />
-
-        <activity
-            android:name=".activities.MockUserAuthenticationRequestActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboard|keyboardHidden|navigation" />
-
         <!-- receivers -->
 
         <receiver
@@ -57,11 +46,6 @@
                 <action android:name="com.kaleyra.app_configuration.CONFIGURATION_ACTION_UPDATE" />
             </intent-filter>
         </receiver>
-
-        <receiver
-            android:name=".receivers.AuthenticationRequestNotificationClickedReceiver"
-            android:enabled="true"
-            android:exported="false" />
 
         <!-- Pushy Update Receiver -->
         <!-- Do not modify - internal BroadcastReceiver that restarts the listener service -->

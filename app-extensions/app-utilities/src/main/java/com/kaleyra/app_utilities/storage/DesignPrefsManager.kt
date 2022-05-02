@@ -19,9 +19,10 @@ package com.kaleyra.app_utilities.storage
 import android.annotation.SuppressLint
 import android.content.Context
 import com.kaleyra.app_configuration.model.Configuration
-import com.kaleyra.collaboration_suite_core_ui.utils.DESIGN_PREFS
 
 object DesignPrefsManager {
+
+    private const val DESIGN_PREFS = "KaleyraCollaborationSuiteUIPrefs"
 
     /**
      * Configure design preferences from Configuration object

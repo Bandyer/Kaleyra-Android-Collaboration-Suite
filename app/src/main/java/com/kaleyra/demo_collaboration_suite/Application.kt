@@ -29,7 +29,10 @@ import com.kaleyra.collaboration_suite_networking.Environment
 import com.kaleyra.collaboration_suite_networking.Region
 import com.kaleyra.collaboration_suite_utils.logging.BaseLogger
 import com.kaleyra.collaboration_suite_utils.logging.androidPrioryLogger
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Date
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class MyApplication : MultiDexApplication() {
 
@@ -52,4 +55,10 @@ fun Context.configuration(): Collaboration.Configuration? {
     )
 }
 
-suspend fun requestToken(date: Date = Date()) = MultiDexApplication.restApi.getAccessToken()
+suspend fun requestToken(date: Date = Date()) = runCatching {
+    suspendCancellableCoroutine<String> { complete ->
+        MultiDexApplication.restApi.getAccessToken(
+            onSuccess = { complete.resume(it) },
+            onError = { complete.resumeWithException(it) })
+    }
+}.getOrDefault("")

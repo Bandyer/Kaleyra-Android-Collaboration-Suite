@@ -44,8 +44,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
-
+import java.lang.Exception
 
 /**
  * WARNING!!!
@@ -77,6 +76,10 @@ class RestApi(val applicationContext: Context) {
             if (key != "configuration") return@OnSharedPreferenceChangeListener
             restConfiguration = getConfiguration(applicationContext).toRest()
         }
+
+    companion object {
+        const val TAG = "DemoAppRestApi"
+    }
 
     init {
         updateConfiguration()
@@ -132,35 +135,7 @@ class RestApi(val applicationContext: Context) {
         append("apiKey", apiKey)
     }
 
-    private var lastAccessTokenRequestTimestamp = 0L
-    private val accessTokenCachingDuration = TimeUnit.MINUTES.toMillis(5)
     private var currentAccessToken: String? = null
-
-    suspend fun getAccessToken(): String {
-        return try {
-
-            if (System.currentTimeMillis() - lastAccessTokenRequestTimestamp < accessTokenCachingDuration) {
-                withContext(Dispatchers.Main) {
-                    currentAccessToken
-                }
-            }
-
-            updateConfiguration()
-            val response: HttpResponse = client.post("$endpoint/rest/sdk/credentials") {
-                headers(configurationHeaders)
-                contentType(Application.Json)
-                body = AccessToken.Request(LoginManager.getLoggedUser(applicationContext))
-            }
-            withContext(Dispatchers.Main) {
-                currentAccessToken = response.receive<AccessToken.Response>().access_token
-                lastAccessTokenRequestTimestamp = System.currentTimeMillis()
-                currentAccessToken!!
-            }
-        } catch (t: Throwable) {
-            Log.e("GetAccessToken", t.message, t)
-            withContext(Dispatchers.Main) { "" }
-        }
-    }
 
     suspend fun listUsers(): List<String> {
         return try {
@@ -200,8 +175,8 @@ class RestApi(val applicationContext: Context) {
     }
 
     fun unregisterDeviceForPushNotification(devicePushToken: String) {
-        updateConfiguration()
         scope.launch {
+            updateConfiguration()
             kotlin.runCatching {
                 val response: HttpResponse =
                     client.delete("$endpoint/mobile_push_notifications/rest/device/$userId/$appId/$devicePushToken") {
@@ -212,6 +187,46 @@ class RestApi(val applicationContext: Context) {
                     Log.e("PushNotification", "Failed to unregister device for push notifications!")
                 }
             }.onFailure { Log.e("PushNotification", it.message, it) }
+        }
+    }
+
+    fun getAccessToken(onSuccess: (String) -> Unit, onError: (Exception) -> Unit) {
+        scope.launch {
+            updateConfiguration()
+
+            kotlin.runCatching {
+                val response: HttpResponse = client.post("$endpoint/rest/sdk/credentials") {
+                    headers(configurationHeaders)
+                    contentType(Application.Json)
+                    body = AccessToken.Request(LoginManager.getLoggedUser(applicationContext))
+                }
+                currentAccessToken = response.receive<AccessToken.Response>().access_token
+            }.onFailure {
+                Log.e(TAG, it.message ?: "Unable to fetch access token")
+                withContext(Dispatchers.Main) {
+                    onError(Exception(it.message))
+                }
+                return@launch
+            }
+            withContext(Dispatchers.Main) {
+                if (currentAccessToken.isNullOrBlank()) onError(Exception("Unable to get access token!"))
+                else onSuccess(currentAccessToken!!)
+            }
+        }
+    }
+
+    fun getSampleUsers(userIds: List<String>, onSuccess: (ArrayList<DemoAppUser>) -> Unit, onError: (Throwable) -> Unit) {
+        scope.launch {
+            kotlin.runCatching {
+                val response: HttpResponse = client.get("https://608c623c9f42b20017c3dd9d.mockapi.io/user_details/client/") {
+                    headers(configurationHeaders)
+                    contentType(Application.Json)
+                }
+                val demoAppUsers = ArrayList<DemoAppUser>(response.receive<List<DemoAppUser>>().filter { it.user_id in userIds })
+                withContext(Dispatchers.Main) { onSuccess(demoAppUsers) }
+            }.onFailure {
+                withContext(Dispatchers.Main) { onError.invoke(it) }
+            }
         }
     }
 
