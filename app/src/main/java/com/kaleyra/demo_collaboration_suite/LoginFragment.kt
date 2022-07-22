@@ -40,7 +40,7 @@ class LoginFragment : Fragment() {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
 
         var userId = if (LoginManager.isUserLogged(requireContext())) LoginManager.getLoggedUser(requireContext()) else null
-        userId?.also { findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCallFragment(it)) }
+        userId?.also { findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment(it)) }
 
         binding.procedeButton.setOnClickListener {
             userId = binding.sessionUser.editText?.text?.toString()
@@ -50,7 +50,7 @@ class LoginFragment : Fragment() {
             }
 
             LoginManager.login(requireContext(), userId.toString())
-            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToCallFragment(userId!!))
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment(userId!!))
         }
 
         binding.changeConfigurationButton.setOnClickListener {

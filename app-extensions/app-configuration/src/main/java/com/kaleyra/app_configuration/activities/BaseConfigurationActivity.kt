@@ -50,7 +50,6 @@ abstract class BaseConfigurationActivity(override var withToolbar: Boolean = tru
         try {
 
             val configuration: Configuration = json.decodeFromString(uriToJsonObject(uri))
-            configuration.skipCustomization = configuration.useSimplifiedVersion
             configuration.logoName = configuration.logoName?.replace("+", " ")?.trim()
             return configuration.also {
                 val hasChanged = currentConfiguration != configuration

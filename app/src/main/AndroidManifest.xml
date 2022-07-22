@@ -41,6 +41,16 @@
             android:launchMode="singleTask"
             android:screenOrientation="sensor" />
 
+        <!-- FCM Notification Service -->
+
+        <service
+            android:name=".notification.FCMNotificationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".notification.PushyNotificationService"
             android:exported="false">
@@ -50,6 +60,14 @@
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".CollaborationUIService"
+            android:exported="false">
+            <intent-filter>
+                <!-- Do not modify this -->
+                <action android:name="kaleyra_collaboration_configure" />
+            </intent-filter>
+        </service>
 
         <!--        <meta-data-->
         <!--            android:name="com.google.android.glass.TouchEnabledApplication"-->
@@ -57,6 +75,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/BaseTheme.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

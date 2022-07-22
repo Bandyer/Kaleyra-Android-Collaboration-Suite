@@ -30,7 +30,7 @@ import kotlinx.serialization.json.Json
 data class Configuration(
     var appId: String,
     var apiKey: String,
-    var region: String = "Eu",
+    var region: String = "eu",
     var environment: String,
     var userId: String? = null,
     var projectNumber: String? = null,
@@ -41,23 +41,12 @@ data class Configuration(
     var customUserDetailsImageUrl: String? = null,
     var userDetailsProviderMode: UserDetailsProviderMode = if (BuildConfig.USE_MOCK_USER_DETAILS_PROVIDER) UserDetailsProviderMode.SAMPLE else UserDetailsProviderMode.NONE,
     var useLeakCanary: Boolean = BuildConfig.USE_LEAK_CANARY,
-    var useSimplifiedVersion: Boolean = BuildConfig.USE_SIMPLIFIED_VERSION,
     var defaultCallType: CallOptionsType = CallOptionsType.AUDIO_VIDEO,
-    var withWhiteboardCapability: Boolean = true,
-    var withFileSharingCapability: Boolean = true,
-    var withChatCapability: Boolean = true,
-    var withScreenSharingCapability: Boolean = true,
-    var withRecordingEnabled: Boolean = false,
-    var withBackCameraAsDefault: Boolean = false,
-    var withProximitySensorDisabled: Boolean = false,
-    var withFeedbackEnabled: Boolean = true,
     var withMockAuthentication: Boolean = false,
     var firebaseProjectId: String? = null,
     var firebaseMobileAppId: String? = null,
     var firebaseApiKey: String? = null,
-    var hmsAppId: String? = null,
-    var skipCustomization: Boolean = useSimplifiedVersion
-) {
+    var hmsAppId: String? = null): java.io.Serializable {
 
     fun toJson(): String = json.encodeToString(this)
 

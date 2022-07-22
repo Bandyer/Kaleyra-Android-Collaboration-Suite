@@ -21,6 +21,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.kaleyra.app_configuration.activities.ConfigurationActivity
 import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
+import com.kaleyra.collaboration_suite_core_ui.CollaborationUI
 import com.kaleyra.demo_collaboration_suite.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -48,8 +49,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-//        if (Intent.ACTION_VIEW != intent.action) return
-//        GlassSDK.joinUrl(intent.data.toString())
+        if (Intent.ACTION_VIEW != intent.action) return
+        CollaborationUI.phoneBox.join(intent.data.toString())
     }
 }
 

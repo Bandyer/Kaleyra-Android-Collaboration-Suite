@@ -51,7 +51,7 @@ fun Context.configuration(): Collaboration.Configuration? {
         Environment.create(appConfiguration.environment),
         Region.create(appConfiguration.region),
         httpStack = MultiDexApplication.okHttpClient,
-        logger = androidPrioryLogger(BaseLogger.ERROR, PHONE_CALL or PHONE_BOX or STREAMS or INPUTS)
+        logger = androidPrioryLogger(BaseLogger.DEBUG, PHONE_CALL or PHONE_BOX or STREAMS or INPUTS)
     )
 }
 

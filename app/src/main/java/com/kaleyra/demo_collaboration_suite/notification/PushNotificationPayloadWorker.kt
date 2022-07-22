@@ -18,34 +18,23 @@ package com.kaleyra.demo_collaboration_suite.notification
 
 import android.content.Context
 import android.util.Log
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.kaleyra.app_utilities.storage.ConfigurationPrefsManager
-import com.kaleyra.collaboration_suite.Collaboration
-import com.kaleyra.collaboration_suite_core_ui.CollaborationUI
-import com.kaleyra.collaboration_suite_glass_ui.utils.extensions.setUpWithGlassUI
-import com.kaleyra.demo_collaboration_suite.configuration
-import com.kaleyra.demo_collaboration_suite.requestToken
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import com.kaleyra.demo_collaboration_suite.CollaborationUIService
 
 /**
  * Sample implementation of a worker object used to manage the push notification payload.
  * Using worker interface ensures that the payload parsing and process will be executed even if
  * the application is killed by the system.
  */
-class PushNotificationPayloadWorker(val context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+class PushNotificationPayloadWorker(val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         try {
             val payload = inputData.getString("payload") ?: return Result.failure()
             Log.d(TAG, "Received payload\n$payload\nready to be processed.")
-
-            MainScope().launch {
-                val configuration = context.configuration() ?: return@launch
-                CollaborationUI.setUpWithGlassUI(Collaboration.Credentials(requestToken(), onExpire = ::requestToken), configuration)
-                CollaborationUI.phoneBox.connect()
-            }
+            if (!payload.contains("on_call_incoming") && !payload.contains("on_message_sent")) return Result.failure()
+            CollaborationUIService.configure(context)
         } catch (e: Throwable) {
             e.printStackTrace()
             return Result.failure()
