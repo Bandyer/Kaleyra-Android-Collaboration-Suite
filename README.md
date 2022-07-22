@@ -53,16 +53,20 @@ android{
 1. [Initialize](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Initialize)
 1. [Call](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Call)
 1. [Join Link](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Join-Link)
-1. [Observe Call](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Observe-Call)
+1. [Chat](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Chat)
 1. [Push Notifications](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Push-Notifications)
 
 ### More
 
-[Enable Call Sounds & Audio Routing](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Call-Sounds-&-Audio-Routing)
+[User Description](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/User-Description)
+
+[Call Actions Customization](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Call-Actions-Customization)
+
+[Chat Actions Customization](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Chat-Actions-Customization)
+
+[Observe Call](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Observe-Call)
 
 [Logging](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Logging)
-
-[User Description](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/User-Description)
 
 [Proguard](https://github.com/Bandyer/Kaleyra-Android-Collaboration-Suite/wiki/Proguard)
 
@@ -70,9 +74,9 @@ android{
 
 🎨 &nbsp; [Color System](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Color-System)
 
-🎑 &nbsp; [Customize Colors & Themes](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Colors-&-Themes)
+🎑 &nbsp; [Customize Colors & Themes](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Colors-&-Themes-v3.0.0)
 
-🆎 &nbsp; [Customize Font](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Font)
+🆎 &nbsp; [Customize Font](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Font-v3.0.0)
 
 ### Code documentation
 
