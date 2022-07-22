@@ -78,6 +78,8 @@ android{
 
 🆎 &nbsp; [Customize Font](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Customize-Font-v3.0.0)
 
+🎭  &nbsp; [Brand Identity Watermark](https://github.com/Bandyer/Bandyer-Android-Design/wiki/Brand-Identity-Watermark)
+
 ### Code documentation
 
 [Kotlin](https://docs.bandyer.com/Kaleyra-Android-Collaboration-Suite/kDoc/)
